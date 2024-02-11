@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Money Tracker</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"> <!-- Include animate.css for animations -->
+</head>
+<body>
+
+    <div class="center-container animate__animated animate__fadeIn">
+        <div class="container">
+            <h1 class="animate__animated animate__fadeInDown">Modern Money Tracker</h1>
+
+            <div class="input-container animate__animated animate__fadeInLeft">
+                <label for="moneyInput">Enter Amount:</label>
+                <br>
+                <input type="number" id="moneyInput" placeholder="Enter amount">
+            </div>
+
+            <div class="button-container animate__animated animate__fadeInRight">
+                <button onclick="addMoney()" class="animate__animated animate__zoomIn">Add</button>
+                <button onclick="subtractMoney()" class="animate__animated animate__zoomIn">Subtract</button>
+            </div>
+
+            <div id="result" class="animate__animated animate__fadeInUp">Total: $<span id="totalAmount">800.00</span></div>
+        </div>
+
+        <div id="logsContainer" class="animate__animated animate__fadeInLeft">
+            <h2 class="animate__animated animate__fadeInLeft">Transaction Log</h2>
+            <ul id="logList"></ul>
+        </div>
+    </div>
+
+    <script>
+              // JavaScript code
+        let totalAmount = parseFloat(localStorage.getItem('totalAmount')) || 800.00;
+        let transactionLog = JSON.parse(localStorage.getItem('transactionLog')) || [];
+
+        function addMoney() {
+            const moneyInput = document.getElementById('moneyInput').value;
+            if (moneyInput !== "") {
+                totalAmount += parseFloat(moneyInput);
+                logTransaction(`Added $${parseFloat(moneyInput).toFixed(2)}`);
+                updateTotalAmount();
+            }
+        }
+
+        function subtractMoney() {
+            const moneyInput = document.getElementById('moneyInput').value;
+            if (moneyInput !== "") {
+                totalAmount -= parseFloat(moneyInput);
+                logTransaction(`Subtracted $${parseFloat(moneyInput).toFixed(2)}`);
+                updateTotalAmount();
+            }
+        }
+
+        function updateTotalAmount() {
+            const totalAmountElement = document.getElementById('totalAmount');
+            totalAmountElement.textContent = totalAmount.toFixed(2);
+            localStorage.setItem('totalAmount', totalAmount);
+        }
+
+        function logTransaction(transaction) {
+            transactionLog.push(transaction);
+            updateLog();
+        }
+
+        function updateLog() {
+            const logListElement = document.getElementById('logList');
+            logListElement.innerHTML = "";
+
+            transactionLog.forEach(transaction => {
+                const listItem = document.createElement('li');
+                listItem.textContent = transaction;
+                listItem.className = "log-item animate__animated animate__fadeIn"; // Added fadeIn animation class
+                logListElement.appendChild(listItem);
+            });
+
+            localStorage.setItem('transactionLog', JSON.stringify(transactionLog));
+        }
+
+        // Display initial total amount and log
+        updateTotalAmount();
+        updateLog();
+    </script>
+
+</body>
+</html>
